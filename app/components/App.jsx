@@ -1,10 +1,13 @@
 import React from "react";
 
+/* Third-party imports */
 import uuid from "node-uuid";
 
+/* Components */
 import PhotoColumn from "./PhotoColumn";
 import SiteHeader from "./SiteHeader";
 
+/* Services */
 import {getPhotos} from "../services/FiveHundredService";
 
 export default class App extends React.Component {
@@ -12,18 +15,20 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.photoColumnsNum = 4;
+        this.photoColumnNum = this.determinePhotoColumnsNum();
+        const initialPhotoSet = this.getInitialPhotoSet(this.photoColumnNum);
 
         this.state = {
             feature: "popular",
             currentPage: 1,
-            photoSets: [[], [], [], []],
+            photoSets: initialPhotoSet,
             favoritePhotoIds: [],
-            scrollTopHeight: 0
+            scrollTopHeight: 0,
+            latestPhotoSetUUIDs: [],
+            updateInitiated: false
         };
 
-        this.updateInitiated = false;
-        this.previousScrollTop = 0;
+        this.previousScrollTop = 0;     // determines scroll direction to improve infinite load
 
         this.loadPhotos = this.loadPhotos.bind(this);
         this.onToggleFavorite = this.onToggleFavorite.bind(this);
@@ -43,19 +48,41 @@ export default class App extends React.Component {
         this.refs.appContainer.removeEventListener("scroll", this.handleScroll);
     }
 
+    determinePhotoColumnsNum() {
+        if (this.props.browserWidth > 1200) {
+            return 4;
+        } else if (this.props.browserWidth > 992) {
+            return 3;
+        } else if (this.props.browserWidth > 768) {
+            return 2;
+        }
+        return 1;
+    }
+
+    getInitialPhotoSet(columns) {
+        const initialPhotoSet = [];
+        for (let i = 0; i < columns; i++) {
+            initialPhotoSet.push([]);
+        }
+        return initialPhotoSet;
+    }
+
     loadPhotos() {
+        // TODO: Keep track of total page numbers so we don't request more pages after we hit the last one
         const updatedPhotoSets = this.state.photoSets.slice(0);
         return getPhotos(this.state.feature, this.state.currentPage)
             .then(data => {
                 data.photos.forEach((photo, index) => {
                     const photoSetIndex =
-                        (data.photos.length + index) % this.photoColumnsNum;
+                        (data.photos.length + index) % this.photoColumnNum;
                     photo.uuid = uuid.v4();
                     updatedPhotoSets[photoSetIndex].push(photo);
                 });
+                const latestPhotoSetUUIDs = data.photos.map(latestPhoto => latestPhoto.uuid);
                 this.setState({
                     photoSets: updatedPhotoSets,
-                    currentPage: this.state.currentPage + 1
+                    currentPage: this.state.currentPage + 1,
+                    latestPhotoSetUUIDs: latestPhotoSetUUIDs
                 });
             });
     }
@@ -79,6 +106,9 @@ export default class App extends React.Component {
             scrollTopHeight: e.srcElement.scrollTop
         });
 
+        // Only want to load more if the user is scrolling down
+        // This is to prevent us from scrolling up when being within load more section
+        // at the bottom of the page, which would trigger more photos to be loaded.
         if (this.determineScrollDirection(e.srcElement.scrollTop) !== 1) {
             this.previousScrollTop = e.srcElement.scrollTop;
             return;
@@ -90,23 +120,21 @@ export default class App extends React.Component {
             totalScrollableArea = e.srcElement.scrollHeight,
             percentageScrolled = (100 / totalScrollableArea) * scrolledArea;
 
-        if (percentageScrolled >= 88 && !this.updateInitiated) {
-            this.updateInitiated = true;
-            setTimeout(() => {
+        if (percentageScrolled >= 88 && !this.state.updateInitiated) {
+            this.setState({
+                updateInitiated: true
+            }, () => {
                 this.loadPhotos()
                     .then(() => {
-                        this.updateInitiated = false;
+                        this.setState({
+                            updateInitiated: false
+                        });
                     });
-            }, 100);
+            });
         }
-
     }
 
-    /*
-        Returns
-            1: UP
-            0: DOWN
-    */
+    // Returns: 1 = UP, 0 = DOWN
     determineScrollDirection(currentScrollTop) {
         return (this.previousScrollTop < currentScrollTop) ? 1 : 0;
     }
@@ -116,7 +144,8 @@ export default class App extends React.Component {
             <div className="app-wrapper">
                 <SiteHeader
                     favoritesCount={this.state.favoritePhotoIds.length}
-                    scrollTopHeight={this.state.scrollTopHeight}/>
+                    scrollTopHeight={this.state.scrollTopHeight}
+                    updateInitiated={this.state.updateInitiated}/>
 
                 <div className="app-container" ref="appContainer">
                     {
@@ -125,7 +154,9 @@ export default class App extends React.Component {
                                 key={index}
                                 photos={photoSet}
                                 favoritePhotoIds={this.state.favoritePhotoIds}
-                                onToggleFavorite={this.onToggleFavorite} />
+                                onToggleFavorite={this.onToggleFavorite}
+                                photoColumnNum={this.photoColumnNum}
+                                latestPhotoSetUUIDs={this.state.latestPhotoSetUUIDs}/>
                         ))
                     }
                 </div>

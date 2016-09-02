@@ -3,9 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <title>FiveHundoPX</title>
+
         <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,300|Unica+One" rel="stylesheet">
         <link rel="stylesheet" href="./styles/font-awesome-4.6.3/css/font-awesome.min.css">
+
         <style media="screen">
             html,
             body,
@@ -17,14 +20,21 @@
                 margin: 0;
                 font-family: 'Josefin Sans', sans-serif;
             }
+            .app-container {
+                overflow-y: auto;
+                height: 90%;
+                padding: 1%;
+                box-sizing: border-box;
+                background-image: url("/images/escheresque.png"); /* Got the pattern from http://subtlepatterns.com/ */
+            }
 
+            /* Site Header */
             .site-header {
                 height: 10%;
                 width: 100%;
                 font-family: 'Unica One', cursive;
                 font-size: 2em;
-                /*background-color: #222;*/
-                background: linear-gradient(to bottom, #000222 0%,#3c3c3c 99%);
+                background: linear-gradient(to bottom, #000222 0%, #3c3c3c 99%);
                 color: #F39C12;
                 display: flex;
                 flex-direction: row;
@@ -32,6 +42,11 @@
                 align-items: center;
                 padding: 0 10px;
                 box-sizing: border-box;
+                transition: background-color ease 1s;
+            }
+            .site-header.updating {
+                background: #F39C12;
+                color: #000222;
             }
             .favorites-count-container,
             .menu-button-container {
@@ -56,35 +71,60 @@
             .site-header-middle {
                 width: 85%;
                 text-align: center;
-                font-size: 1.5em;
+                font-size: 1.3em;
                 transition: all ease 0.5s;
             }
             .site-header-middle.scrolled {
                 font-size: 1em;
             }
-
-            .app-container {
-                overflow-y: auto;
-                height: 90%;
-                padding: 1%;
-                box-sizing: border-box;
-                /*background-color: #EEEEEE;*/
-                background-image: url("/images/escheresque.png");
+            h1.site-title {
+                font-size: 1.3em;
+                font-weight: normal;
             }
 
-            .photo-column {
+            /* Responsive Columns */
+            .photo-column-1 {
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .photo-column-2 {
+                width: 48.5%;
+                float: left;
+                margin-right: 1%;
+            }
+            .photo-column-2:first-child {
+                margin-left: 1%;
+            }
+            .photo-column-2:last-child {
+                margin-right: 1%;
+            }
+
+            .photo-column-3 {
+                width: 32%;
+                float: left;
+                margin-right: 1%;
+            }
+            .photo-column-3:first-child {
+                margin-left: 1%;
+            }
+            .photo-column-3:last-child {
+                margin-right: 1%;
+            }
+
+            .photo-column-4 {
                 width: 24%;
                 float: left;
                 margin-right: 1%;
             }
-
-            .photo-column:first-child {
+            .photo-column-4:first-child {
                 margin-left: 0.5%;
             }
-            .photo-column:last-child {
+            .photo-column-4:last-child {
                 margin-right: 0.5%;
             }
 
+            /* Tiles */
             .tile {
                 width: 100%;
                 background-color: #FFF;
@@ -95,13 +135,12 @@
                 font-weight: 400;
                 box-shadow: 0px 2px 5px 0px #b4bfc3;
                 transition: all ease 0.2s;
+                text-align: center;
             }
-
             .tile.favorite {
                 background-color: #EC644B;
                 color: #FFF;
             }
-
             .tile-image-container {
                 position: relative;
             }
@@ -124,7 +163,11 @@
             .tile-image-container:hover span.times-viewed {
                 opacity: 1;
             }
-
+            h2.tile-heading {
+                font-size: 1em;
+                font-weight: normal;
+                margin: 0;
+            }
         </style>
     </head>
 

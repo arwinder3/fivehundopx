@@ -15,12 +15,28 @@ export default class SiteHeader extends React.Component {
         return classNames.join(" ");
     }
 
+    getSiteHeaderClassNames() {
+        const classNames = ["site-header"];
+
+        if (this.props.updateInitiated) {
+            classNames.push("updating");
+        }
+
+        return classNames.join(" ");
+    }
+
     render() {
         return (
-            <div className="site-header">
-                <div className="menu-button-container"><i className="fa fa-bars"></i></div>
-                <div className={this.getSiteTitleClassNames()}>FiveHundoPX</div>
-                <div className="favorites-count-container"><i className="fa fa-heart"></i> {this.props.favoritesCount}</div>
+            <div className={this.getSiteHeaderClassNames()}>
+                <div className="menu-button-container">
+                    <i className="fa fa-bars"></i>
+                </div>
+                <div className={this.getSiteTitleClassNames()}>
+                    <h1 className="site-title">FiveHundoPX</h1>
+                </div>
+                <div className="favorites-count-container">
+                    <i className="fa fa-heart"></i> {this.props.favoritesCount}
+                </div>
             </div>
         );
     }
