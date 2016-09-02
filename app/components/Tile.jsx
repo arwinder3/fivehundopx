@@ -12,7 +12,6 @@ import React from "react";
 export default class Tile extends React.Component {
     constructor(props) {
         super(props);
-        this.imageHeight = 0;
 
         this.handleToggleFavorite = this.handleToggleFavorite.bind(this);
     }
@@ -50,7 +49,7 @@ export default class Tile extends React.Component {
             <div className={this.getTileClassNames()} ref="tileContainer" onClick={this.handleToggleFavorite}>
                 <div style={{textAlign: "center"}}>
                     <div className="tile-image-container">
-                        <span className="times-viewed">{this.props.times_viewed}</span>
+                        <span className="times-viewed">Times Viewed: {this.props.times_viewed}</span>
                         <img
                             ref="image"
                             width="100%"

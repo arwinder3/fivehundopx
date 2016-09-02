@@ -3,15 +3,9 @@ import React from "react";
 import uuid from "node-uuid";
 
 import PhotoColumn from "./PhotoColumn";
+import SiteHeader from "./SiteHeader";
 
 import {getPhotos} from "../services/FiveHundredService";
-
-let SiteHeader = (props) => (
-    <div className="site-header">
-        <div style={{textAlign: "right"}}><i className="fa fa-heart"></i> {props.favoritesCount}</div>
-        This is the site header
-    </div>
-);
 
 export default class App extends React.Component {
 
@@ -24,7 +18,8 @@ export default class App extends React.Component {
             feature: "popular",
             currentPage: 1,
             photoSets: [[], [], [], []],
-            favoritePhotoIds: []
+            favoritePhotoIds: [],
+            scrollTopHeight: 0
         };
 
         this.updateInitiated = false;
@@ -80,6 +75,10 @@ export default class App extends React.Component {
     }
 
     handleScroll(e) {
+        this.setState({
+            scrollTopHeight: e.srcElement.scrollTop
+        });
+
         if (this.determineScrollDirection(e.srcElement.scrollTop) !== 1) {
             this.previousScrollTop = e.srcElement.scrollTop;
             return;
@@ -90,12 +89,6 @@ export default class App extends React.Component {
         const scrolledArea = e.srcElement.scrollTop + e.srcElement.clientHeight,
             totalScrollableArea = e.srcElement.scrollHeight,
             percentageScrolled = (100 / totalScrollableArea) * scrolledArea;
-
-        // console.log("*********");
-        // console.log("scrolledArea: ", scrolledArea);
-        // console.log("totalScrollableArea: ", totalScrollableArea);
-        // console.log("percentageScrolled: ", percentageScrolled);
-        // console.log("*********");
 
         if (percentageScrolled >= 88 && !this.updateInitiated) {
             this.updateInitiated = true;
@@ -122,7 +115,8 @@ export default class App extends React.Component {
         return (
             <div className="app-wrapper">
                 <SiteHeader
-                    favoritesCount={this.state.favoritePhotoIds.length}/>
+                    favoritesCount={this.state.favoritePhotoIds.length}
+                    scrollTopHeight={this.state.scrollTopHeight}/>
 
                 <div className="app-container" ref="appContainer">
                     {
