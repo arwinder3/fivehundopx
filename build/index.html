@@ -2,8 +2,80 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Webpack React Boilerplate</title>
+        <title>FiveHundoPX</title>
+        <link rel="stylesheet" href="./styles/font-awesome-4.6.3/css/font-awesome.min.css">
+        <style media="screen">
+            html,
+            body,
+            #app,
+            .app-wrapper {
+                height: 100%;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            .site-header {
+                height: 10%;
+                width: 100%;
+                border: 1px solid black;
+                background-color: white;
+            }
+
+            .app-container {
+                overflow-y: auto;
+                height: 90%;
+                padding: 1%;
+                box-sizing: border-box;
+            }
+
+            .photo-column {
+                width: 24%;
+                float: left;
+                margin-right: 1%;
+            }
+
+            .photo-column:first-child {
+                margin-left: 0.5%;
+            }
+            .photo-column:last-child {
+                margin-right: 0.5%;
+            }
+
+            .tile {
+                width: 100%;
+                background-color: #FFF;
+                padding: 3%;
+                border: 1px solid black;
+                border-radius: 2px;
+                margin: 0 0 15px 0;
+                box-sizing: border-box;
+            }
+
+            .tile.favorite {
+                background-color: rgba(236, 100, 75, 0.5);
+            }
+
+            .tile-image-container {
+                position: relative;
+            }
+            .tile-image-container img {
+                margin: 0 0 10px 0;
+            }
+            .tile-image-container span.times-viewed {
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                color: red;
+            }
+            .tile-image-container:hover span.times-viewed {
+                opacity: 1;
+            }
+
+        </style>
     </head>
+
     <body>
         <div id="app"></div>
         <script type="text/javascript" src="./bundle.js">
